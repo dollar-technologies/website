@@ -219,8 +219,13 @@ export const zobra = {
   ],
   stack: ['React', 'TypeScript', 'Tailwind CSS', 'Capacitor (Android)', 'Supabase', 'PostgreSQL', 'Google Maps Platform', 'Vercel', 'Sentry'],
   status: 'ZOBRA is being prepared for a pilot with local shops in Chennai.',
-  // TODO optional: shown on the case study when filled.
-  screenshots: [], // e.g. { src: '/assets/zobra/home.png', alt: 'ZOBRA customer home screen' }
+  // Real screens from the ZOBRA staging app (test stores and test orders only). The first three are also used on Home.
+  screenshots: [
+    { src: '/assets/zobra/zobra-home.webp', alt: 'ZOBRA customer app home: delivery time, categories and stores near the customer' },
+    { src: '/assets/zobra/zobra-store.webp', alt: 'A verified store page in ZOBRA with opening hours, delivery time and cash on delivery' },
+    { src: '/assets/zobra/zobra-order.webp', alt: 'ZOBRA order tracking: placed, accepted by store, packed, on the way, delivered' },
+    { src: '/assets/zobra/zobra-seller.webp', alt: 'ZOBRA seller portal dashboard with revenue, orders and low-stock alerts' },
+  ],
   video: '',       // YouTube embed URL, e.g. 'https://www.youtube-nocookie.com/embed/VIDEO_ID'
   playStore: '',   // Google Play listing URL
 };

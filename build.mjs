@@ -4,7 +4,9 @@ import { join, dirname } from 'node:path';
 import { site, services, engagements, guarantees, process as steps, values, zobra, posts, techStack, packages, faqs } from './content.mjs';
 
 const OUT = 'dist';
+const OG = existsSync('assets/og-image.png');
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const LOGO_TEXT = `<span class="logo-text">${esc(site.name.split(' ')[0])}<span> ${esc(site.name.split(' ').slice(1).join(' '))}</span></span>`;
 const list = (items, cls = 'checks') => `<ul class="${cls}">${items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`;
 const fmtDate = (d) => new Date(d + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -41,12 +43,15 @@ ${url ? `<link rel="canonical" href="${url}">\n<meta property="og:url" content="
 <meta property="og:site_name" content="${esc(site.name)}">
 <meta property="og:title" content="${esc(fullTitle)}">
 <meta property="og:description" content="${esc(description)}">
-<meta name="twitter:card" content="summary">
-<meta name="theme-color" content="#3b3bd9">
+${OG && site.domain ? `<meta property="og:image" content="${site.domain.replace(/\/$/, '')}/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">` : ''}
+<meta name="twitter:card" content="${OG ? 'summary_large_image' : 'summary'}">
+<meta name="theme-color" content="#16130F">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Instrument+Serif:ital@1&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/styles.css">
 ${jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>` : ''}
 </head>
@@ -54,7 +59,7 @@ ${jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script
 <a class="skip" href="#main">Skip to content</a>
 <header>
   <div class="wrap nav">
-    <a class="logo" href="/"><span class="logo-mark" aria-hidden="true">D</span>${esc(site.name)}</a>
+    <a class="logo" href="/" aria-label="${esc(site.name)} home"><img src="/assets/favicon.svg" alt="" width="34" height="34">${LOGO_TEXT}</a>
     <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">☰</button>
     <nav class="links" id="nav-links" aria-label="Main">${navLinks}<a class="btn btn-primary" href="/contact/">Start a project</a></nav>
   </div>
@@ -65,7 +70,7 @@ ${body}
 <footer>
   <div class="wrap footer-grid">
     <div>
-      <a class="logo" href="/"><span class="logo-mark" aria-hidden="true">D</span>${esc(site.name)}</a>
+      <a class="logo" href="/" aria-label="${esc(site.name)} home"><img src="/assets/favicon.svg" alt="" width="34" height="34">${LOGO_TEXT}</a>
       <p class="muted">A product and services company. Makers of ZOBRA.</p>
       ${profileLinks ? `<p class="profiles">${profileLinks}</p>` : ''}
     </div>
@@ -95,29 +100,38 @@ const pageHead = (eyebrow, title, lead, crumbs = []) => `
   </div>
 </section>`;
 
+// Section heading: number + label, title, optional lead on the right.
+const secHead = (num, label, title, lead = '') => `
+  <div class="sec-head">
+    <div><span class="eyebrow">${num === '—' ? '' : `<b>${num}</b>`}${esc(label)}</span><h2>${title}</h2></div>
+    ${lead ? `<p class="lead">${esc(lead)}</p>` : ''}
+  </div>`;
+
 const ctaBand = (title = 'Have a project in mind?', text = `Tell us what you want to build. We reply ${site.responseTime} with questions, a rough plan and an estimate.`) => `
 <section class="cta-band">
   <div class="wrap">
     <div><h2>${esc(title)}</h2><p>${esc(text)}</p></div>
-    <a class="btn btn-accent" href="/contact/">${site.freeConsultation ? 'Book a free consultation' : 'Start a project'}</a>
+    <a class="btn btn-ink" href="/contact/">${site.freeConsultation ? 'Book a free consultation' : 'Start a project'} <span aria-hidden="true">→</span></a>
   </div>
 </section>`;
 
-const serviceCards = () => `<div class="grid four">${services.map((s) => `
-  <a class="card card-link" href="/services/${s.slug}/">
-    <div class="icon">${s.icon}</div>
-    <h3>${esc(s.title)}</h3>
-    <p>${esc(s.short)}</p>
-    <span class="more">Learn more →</span>
-  </a>`).join('')}</div>`;
+const serviceCards = () => `<ol class="svc-list">${services.map((s, i) => `
+  <li><a href="/services/${s.slug}/">
+    <span class="svc-num">0${i + 1}</span>
+    <span class="svc-main"><span class="svc-title">${esc(s.title)}</span><span class="svc-short">${esc(s.short)}</span></span>
+    <span class="svc-tags">${s.stack.slice(0, 3).map((t) => `<span>${esc(t)}</span>`).join('')}</span>
+    <span class="svc-arrow" aria-hidden="true">→</span>
+  </a></li>`).join('')}</ol>`;
 
 const statsBar = () => site.stats.length ? `<div class="stats">${site.stats.map((s) => `<div><strong>${esc(s.value)}</strong><span>${esc(s.label)}</span></div>`).join('')}</div>` : '';
 
 const metricCards = () => `<div class="metrics">${zobra.metrics.map((m) => `<div><strong>${esc(m.value)}</strong><span>${esc(m.label)}</span></div>`).join('')}</div>`;
 
+const phone = (shot, cls = '', eager = false) => shot ? `<figure class="phone ${cls}"><img src="${esc(shot.src)}" alt="${esc(shot.alt)}" width="390" height="844"${eager ? '' : ' loading="lazy"'}></figure>` : '';
+
 const testimonials = () => site.testimonials.length ? `
 <section><div class="wrap">
-  <span class="eyebrow">Clients</span><h2>What our clients say</h2>
+  ${secHead('—', 'Clients', 'What our clients say')}
   <div class="grid">${site.testimonials.map((t) => `
     <figure class="card quote"><blockquote>“${esc(t.quote)}”</blockquote>
       <figcaption>${t.photo ? `<img src="${esc(t.photo)}" alt="" width="44" height="44">` : ''}<span><strong>${esc(t.name)}</strong><br>${esc(t.role)}</span></figcaption></figure>`).join('')}</div>
@@ -129,13 +143,13 @@ const logos = () => site.clients.length ? `
   <div class="logos">${site.clients.map((c) => `<img src="${esc(c.logo)}" alt="${esc(c.name)}" height="36">`).join('')}</div>
 </div></section>` : '';
 
-const processSteps = () => `<div class="grid steps">${steps.map((s) => `<div class="card"><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></div>`).join('')}</div>`;
+const processSteps = () => `<ol class="timeline">${steps.map((s, i) => `<li><span class="t-num">0${i + 1}</span><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`).join('')}</ol>`;
 
 const zobraMedia = () => (zobra.screenshots.length || zobra.video || zobra.playStore) ? `
 <section><div class="wrap">
-  <h2>See it in action</h2>
+  ${secHead('—', 'Screens', 'See it in action', 'Real screens from the ZOBRA staging app, with test stores and test orders.')}
   ${zobra.video ? `<div class="video"><iframe src="${esc(zobra.video)}" title="ZOBRA demo video" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>` : ''}
-  ${zobra.screenshots.length ? `<div class="shots">${zobra.screenshots.map((i) => `<img src="${esc(i.src)}" alt="${esc(i.alt)}" loading="lazy">`).join('')}</div>` : ''}
+  ${zobra.screenshots.length ? `<div class="shots">${zobra.screenshots.map((i) => phone(i)).join('')}</div>` : ''}
   ${zobra.playStore ? `<p class="mt"><a class="btn btn-primary" href="${esc(zobra.playStore)}" rel="noopener">Get it on Google Play</a></p>` : ''}
 </div></section>` : '';
 
@@ -158,69 +172,68 @@ add({
   body: `
 <section class="hero">
   <div class="wrap hero-grid">
-    <div>
-      <span class="pill"><span class="dot" aria-hidden="true"></span>Open for new projects</span>
-      <h1>We build marketplace, delivery and booking apps for Indian businesses.</h1>
+    <div class="hero-copy">
+      <p class="kicker"><span class="dot" aria-hidden="true"></span>Open for projects · Navalur, Chennai</p>
+      <h1>We build <em>marketplace, delivery and booking</em> apps for Indian businesses.</h1>
       <p class="lead">${esc(site.name)} is a Chennai product studio. We built ZOBRA, our own hyperlocal delivery platform, and we design and build websites, web apps and Android and iOS apps for businesses that want the same quality.</p>
       <div class="cta">
-        <a class="btn btn-primary" href="/contact/">${site.freeConsultation ? 'Book a free consultation' : 'Tell us about your project'}</a>
-        <a class="btn btn-ghost" href="/work/zobra/">See the ZOBRA case study</a>
+        <a class="btn btn-primary" href="/contact/">${site.freeConsultation ? 'Book a free consultation' : 'Tell us about your project'} <span aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="/work/zobra/">See how we built ZOBRA</a>
       </div>
     </div>
-    <div class="hero-card" aria-label="What we deliver">
-      <div class="row"><span>Web</span><strong>Next.js · React</strong></div>
-      <div class="row"><span>Mobile</span><strong>Flutter (Android &amp; iOS)</strong></div>
-      <div class="row"><span>Backend</span><strong>Node.js · Express</strong></div>
-      <div class="row"><span>Databases</span><strong>PostgreSQL · MongoDB</strong></div>
-      <div class="row"><span>Cloud</span><strong>AWS · Vercel</strong></div>
-      <a class="text-link light" href="/technology/">Why we chose this stack →</a>
+    <div class="hero-visual">
+      <img class="hero-map" src="/assets/hero-map.svg" alt="" width="600" height="560">
+      ${phone(zobra.screenshots[0], 'p-back', true)}
+      ${phone(zobra.screenshots[2], 'p-front', true)}
+      <span class="chip c1"><b>10 min</b> store accept window</span>
+      <span class="chip c2"><b>2 codes</b> at pickup &amp; drop</span>
+      <span class="chip c3"><b>Radius</b> checked on the server</span>
     </div>
   </div>
   ${site.stats.length ? `<div class="wrap">${statsBar()}</div>` : ''}
 </section>
+<div class="proof"><ul class="wrap">
+  <li>You own the code from day one</li><li>NDA before you share your idea</li><li>Weekly demos on a live staging link</li><li>Office in Navalur, OMR</li>
+</ul></div>
 ${logos()}
 <section id="services"><div class="wrap">
-  <span class="eyebrow">Services</span>
-  <h2>What we can build for you</h2>
-  <p class="lead">Our focus is marketplaces, delivery and booking products, but we build any web or mobile product, from the first idea to a live product with real users.</p>
+  ${secHead('01', 'Services', 'What we can build for you', 'Our focus is marketplaces, delivery and booking products, but we build any web or mobile product, from the first idea to a live product with real users.')}
   ${serviceCards()}
 </div></section>
 
-<section class="product"><div class="wrap">
-  <div class="product-grid">
-    <div>
-      <span class="eyebrow">Featured work</span>
-      <h2>ZOBRA: your neighbourhood shops, delivered</h2>
-      <p class="lead">${esc(zobra.summary)} We designed and built every part of it: customer app, partner app, seller portal, admin console and backend.</p>
-      <div class="cta"><a class="btn btn-accent" href="/work/zobra/">Read the case study</a></div>
-    </div>
+<section class="product"><div class="wrap product-grid">
+  <div>
+    <span class="eyebrow"><b>02</b>Our own product</span>
+    <h2>ZOBRA: <em>your neighbourhood shops,</em> delivered.</h2>
+    <p class="lead">${esc(zobra.summary)} We designed and built every part of it: customer app, partner app, seller portal, admin console and backend.</p>
     ${metricCards()}
+    <div class="cta"><a class="btn btn-gold" href="/work/zobra/">Read the case study <span aria-hidden="true">→</span></a></div>
+  </div>
+  <div class="phones" aria-label="ZOBRA screens">
+    ${phone(zobra.screenshots[1], 'p1')}${phone(zobra.screenshots[3], 'p2')}
   </div>
 </div></section>
 
 <section><div class="wrap">
-  <span class="eyebrow">Ways to work with us</span>
-  <h2>Pick the model that fits your stage</h2>
-  <div class="grid four">${engagements.map((e) => `<div class="card"><h3>${esc(e.title)}</h3><p>${esc(e.fit)}</p></div>`).join('')}</div>
-  <p class="mt"><a class="text-link" href="/engagement/">Compare engagement models →</a></p>
+  ${secHead('03', 'Process', 'A simple process, with you at every step')}
+  ${processSteps()}
 </div></section>
 
 <section class="soft"><div class="wrap">
-  <span class="eyebrow">Process</span>
-  <h2>A simple process, with you at every step</h2>
-  ${processSteps()}
+  ${secHead('04', 'Ways to work with us', 'Pick the model that fits your stage')}
+  <div class="models">${engagements.map((e) => `<div><h3>${esc(e.title)}</h3><p>${esc(e.fit)}</p><span class="small muted">${esc(e.time)}</span></div>`).join('')}</div>
+  <p class="mt"><a class="text-link" href="/engagement/">Compare engagement models and FAQ →</a></p>
 </div></section>
 ${testimonials()}
 <section><div class="wrap">
-  <span class="eyebrow">From the blog</span>
-  <h2>What we're learning</h2>
-  <div class="grid">${posts.slice(0, 3).map(postCard).join('')}</div>
+  ${secHead('05', 'From the blog', 'What we’re learning')}
+  <div class="posts">${posts.slice(0, 3).map(postCard).join('')}</div>
 </div></section>
 ${ctaBand()}`,
 });
 
 function postCard(p) {
-  return `<a class="card card-link" href="/blog/${p.slug}/"><span class="muted small">${fmtDate(p.date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><span class="more">Read →</span></a>`;
+  return `<a class="post" href="/blog/${p.slug}/"><span class="post-date">${fmtDate(p.date)}</span><span class="post-body"><span class="post-title">${esc(p.title)}</span><span class="post-desc">${esc(p.description)}</span></span><span class="svc-arrow" aria-hidden="true">→</span></a>`;
 }
 
 // ---------- Services ----------
@@ -230,7 +243,7 @@ add({
   description: 'Websites and web apps, Android and iOS apps in Flutter, backend and cloud on AWS, and support after launch.',
   body: `${pageHead('Services', 'What we build', 'Four things we do well. Most projects combine several of them.', [[null, 'Services']])}
 <section><div class="wrap">${serviceCards()}<p class="mt"><a class="text-link" href="/technology/">See the technology we use and why →</a></p></div></section>
-<section class="soft"><div class="wrap"><span class="eyebrow">Process</span><h2>How every project runs</h2>${processSteps()}</div></section>
+<section class="soft"><div class="wrap">${secHead('—', 'Process', 'How every project runs')}${processSteps()}</div></section>
 ${ctaBand()}`,
 });
 
@@ -305,7 +318,7 @@ add({
       <div class="stack">${['Web app', 'Android apps', 'Backend', 'Maps & location', 'UI/UX'].map((t) => `<span>${t}</span>`).join('')}</div>
       <span class="more">Read the case study →</span>
     </div>
-    ${metricCards()}
+    <div class="phones small-phones">${phone(zobra.screenshots[0], 'p1')}${phone(zobra.screenshots[2], 'p2')}</div>
   </a>
   <div class="card mt center">
     <h3>Client case studies are on the way</h3>
@@ -461,7 +474,7 @@ add({
   title: 'Blog',
   description: 'Notes from building software products: marketplaces, delivery, mobile apps, backends, cloud and maps.',
   body: `${pageHead('Blog', 'Notes from building products', 'What we learn while building ZOBRA and client projects.', [[null, 'Blog']])}
-<section><div class="wrap"><div class="grid">${posts.map(postCard).join('')}</div></div></section>
+<section><div class="wrap"><div class="posts">${posts.map(postCard).join('')}</div></div></section>
 ${ctaBand()}`,
 });
 
