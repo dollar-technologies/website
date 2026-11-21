@@ -6,7 +6,8 @@ import { site, services, engagements, guarantees, process as steps, values, zobr
 const OUT = 'dist';
 const OG = existsSync('assets/og-image.png');
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const LOGO_TEXT = `<span class="logo-text">${esc(site.name.split(' ')[0])}<span> ${esc(site.name.split(' ').slice(1).join(' '))}</span></span>`;
+// Logo: the manager's design, cut out by brand/prepare-logo.mjs. The link around it carries the accessible name.
+const LOGO = '<img class="logo-img" src="/assets/logo-lockup.png" alt="" width="896" height="240">';
 const list = (items, cls = 'checks') => `<ul class="${cls}">${items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`;
 const fmtDate = (d) => new Date(d + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -20,10 +21,10 @@ const nav = [
 
 const profileLinks = [
   [site.linkedin, 'LinkedIn'], [site.profiles.google, 'Google reviews'], [site.profiles.clutch, 'Clutch'], [site.profiles.goodfirms, 'GoodFirms'],
-].filter(([u]) => u).map(([u, l]) => `<a href="${esc(u)}" rel="noopener">${l}</a>`).join(' · ');
+].filter(([u]) => u).map(([u, l]) => `<a href="${esc(u)}" rel="noopener">${l}</a>`).join('');
 
 function layout({ path, title, description, body, jsonLd }) {
-  const fullTitle = path === '/' ? `${site.name} — ${site.tagline}` : `${title} | ${site.name}`;
+  const fullTitle = path === '/' ? `${site.name} | ${site.tagline}` : `${title} | ${site.name}`;
   const url = site.domain ? site.domain.replace(/\/$/, '') + path : '';
   const navLinks = nav.map(([href, label]) => `<a href="${href}"${path.startsWith(href) ? ' aria-current="page"' : ''}>${label}</a>`).join('');
   const contactBits = [
@@ -47,8 +48,9 @@ ${OG && site.domain ? `<meta property="og:image" content="${site.domain.replace(
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">` : ''}
 <meta name="twitter:card" content="${OG ? 'summary_large_image' : 'summary'}">
-<meta name="theme-color" content="#16130F">
-<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0B1024">
+<link rel="icon" href="/assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Instrument+Serif:ital@1&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -59,7 +61,7 @@ ${jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script
 <a class="skip" href="#main">Skip to content</a>
 <header>
   <div class="wrap nav">
-    <a class="logo" href="/" aria-label="${esc(site.name)} home"><img src="/assets/favicon.svg" alt="" width="34" height="34">${LOGO_TEXT}</a>
+    <a class="logo" href="/" aria-label="${esc(site.name)} home">${LOGO}</a>
     <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">☰</button>
     <nav class="links" id="nav-links" aria-label="Main">${navLinks}<a class="btn btn-primary" href="/contact/">Start a project</a></nav>
   </div>
@@ -70,7 +72,7 @@ ${body}
 <footer>
   <div class="wrap footer-grid">
     <div>
-      <a class="logo" href="/" aria-label="${esc(site.name)} home"><img src="/assets/favicon.svg" alt="" width="34" height="34">${LOGO_TEXT}</a>
+      <a class="logo" href="/" aria-label="${esc(site.name)} home">${LOGO}</a>
       <p class="muted">A product and services company. Makers of ZOBRA.</p>
       ${profileLinks ? `<p class="profiles">${profileLinks}</p>` : ''}
     </div>
@@ -79,8 +81,8 @@ ${body}
     <div><h4>Contact</h4><ul>${contactBits}<li><a href="/contact/">Start a project</a></li></ul></div>
   </div>
   <div class="wrap footer-bottom">
-    <span>© ${new Date().getFullYear()} ${esc(site.name)}. All rights reserved.</span>
-    <span><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></span>
+    <span>© ${new Date().getFullYear()} ${esc(site.name)}</span>
+    <span class="legal"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></span>
   </div>
 </footer>
 ${site.whatsapp ? `<a class="wa" href="https://wa.me/${esc(site.whatsapp)}" rel="noopener" aria-label="Chat on WhatsApp">WhatsApp</a>` : ''}
@@ -94,7 +96,6 @@ const pageHead = (eyebrow, title, lead, crumbs = []) => `
 <section class="page-head">
   <div class="wrap">
     ${crumbs.length ? `<nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a>${crumbs.map(([h, l]) => ` / ${h ? `<a href="${h}">${esc(l)}</a>` : esc(l)}`).join('')}</nav>` : ''}
-    <span class="eyebrow">${esc(eyebrow)}</span>
     <h1>${esc(title)}</h1>
     ${lead ? `<p class="lead">${esc(lead)}</p>` : ''}
   </div>
@@ -103,7 +104,7 @@ const pageHead = (eyebrow, title, lead, crumbs = []) => `
 // Section heading: number + label, title, optional lead on the right.
 const secHead = (num, label, title, lead = '') => `
   <div class="sec-head">
-    <div><span class="eyebrow">${num === '—' ? '' : `<b>${num}</b>`}${esc(label)}</span><h2>${title}</h2></div>
+    <div><h2>${title}</h2></div>
     ${lead ? `<p class="lead">${esc(lead)}</p>` : ''}
   </div>`;
 
@@ -111,7 +112,7 @@ const ctaBand = (title = 'Have a project in mind?', text = `Tell us what you wan
 <section class="cta-band">
   <div class="wrap">
     <div><h2>${esc(title)}</h2><p>${esc(text)}</p></div>
-    <a class="btn btn-ink" href="/contact/">${site.freeConsultation ? 'Book a free consultation' : 'Start a project'} <span aria-hidden="true">→</span></a>
+    <a class="btn btn-ink" href="/contact/">${site.freeConsultation ? 'Book a free consultation' : 'Start a project'}</a>
   </div>
 </section>`;
 
@@ -120,7 +121,7 @@ const serviceCards = () => `<ol class="svc-list">${services.map((s, i) => `
     <span class="svc-num">0${i + 1}</span>
     <span class="svc-main"><span class="svc-title">${esc(s.title)}</span><span class="svc-short">${esc(s.short)}</span></span>
     <span class="svc-tags">${s.stack.slice(0, 3).map((t) => `<span>${esc(t)}</span>`).join('')}</span>
-    <span class="svc-arrow" aria-hidden="true">→</span>
+    <span class="svc-arrow" aria-hidden="true"></span>
   </a></li>`).join('')}</ol>`;
 
 const statsBar = () => site.stats.length ? `<div class="stats">${site.stats.map((s) => `<div><strong>${esc(s.value)}</strong><span>${esc(s.label)}</span></div>`).join('')}</div>` : '';
@@ -173,13 +174,13 @@ add({
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <p class="kicker"><span class="dot" aria-hidden="true"></span>Open for projects · Navalur, Chennai</p>
-      <h1>We build <em>marketplace, delivery and booking</em> apps for Indian businesses.</h1>
+      <h1>We build marketplace, delivery and booking apps for Indian businesses.</h1>
       <p class="lead">${esc(site.name)} is a Chennai product studio. We built ZOBRA, our own hyperlocal delivery platform, and we design and build websites, web apps and Android and iOS apps for businesses that want the same quality.</p>
       <div class="cta">
-        <a class="btn btn-primary" href="/contact/">${site.freeConsultation ? 'Book a free consultation' : 'Tell us about your project'} <span aria-hidden="true">→</span></a>
+        <a class="btn btn-primary" href="/contact/">${site.freeConsultation ? 'Book a free consultation' : 'Tell us about your project'}</a>
         <a class="btn btn-ghost" href="/work/zobra/">See how we built ZOBRA</a>
       </div>
+      <p class="kicker">Open for new projects in Navalur, Chennai</p>
     </div>
     <div class="hero-visual">
       <img class="hero-map" src="/assets/hero-map.svg" alt="" width="600" height="560">
@@ -203,11 +204,10 @@ ${logos()}
 
 <section class="product"><div class="wrap product-grid">
   <div>
-    <span class="eyebrow"><b>02</b>Our own product</span>
-    <h2>ZOBRA: <em>your neighbourhood shops,</em> delivered.</h2>
+    <h2>ZOBRA: your neighbourhood shops, delivered.</h2>
     <p class="lead">${esc(zobra.summary)} We designed and built every part of it: customer app, partner app, seller portal, admin console and backend.</p>
     ${metricCards()}
-    <div class="cta"><a class="btn btn-gold" href="/work/zobra/">Read the case study <span aria-hidden="true">→</span></a></div>
+    <div class="cta"><a class="btn btn-gold" href="/work/zobra/">Read the case study</a></div>
   </div>
   <div class="phones" aria-label="ZOBRA screens">
     ${phone(zobra.screenshots[1], 'p1')}${phone(zobra.screenshots[3], 'p2')}
@@ -222,7 +222,7 @@ ${logos()}
 <section class="soft"><div class="wrap">
   ${secHead('04', 'Ways to work with us', 'Pick the model that fits your stage')}
   <div class="models">${engagements.map((e) => `<div><h3>${esc(e.title)}</h3><p>${esc(e.fit)}</p><span class="small muted">${esc(e.time)}</span></div>`).join('')}</div>
-  <p class="mt"><a class="text-link" href="/engagement/">Compare engagement models and FAQ →</a></p>
+  <p class="mt"><a class="text-link" href="/engagement/">Compare engagement models and FAQ</a></p>
 </div></section>
 ${testimonials()}
 <section><div class="wrap">
@@ -233,7 +233,7 @@ ${ctaBand()}`,
 });
 
 function postCard(p) {
-  return `<a class="post" href="/blog/${p.slug}/"><span class="post-date">${fmtDate(p.date)}</span><span class="post-body"><span class="post-title">${esc(p.title)}</span><span class="post-desc">${esc(p.description)}</span></span><span class="svc-arrow" aria-hidden="true">→</span></a>`;
+  return `<a class="post" href="/blog/${p.slug}/"><span class="post-date">${fmtDate(p.date)}</span><span class="post-body"><span class="post-title">${esc(p.title)}</span><span class="post-desc">${esc(p.description)}</span></span><span class="svc-arrow" aria-hidden="true"></span></a>`;
 }
 
 // ---------- Services ----------
@@ -242,7 +242,7 @@ add({
   title: 'Services',
   description: 'Websites and web apps, Android and iOS apps in Flutter, backend and cloud on AWS, and support after launch.',
   body: `${pageHead('Services', 'What we build', 'Four things we do well. Most projects combine several of them.', [[null, 'Services']])}
-<section><div class="wrap">${serviceCards()}<p class="mt"><a class="text-link" href="/technology/">See the technology we use and why →</a></p></div></section>
+<section><div class="wrap">${serviceCards()}<p class="mt"><a class="text-link" href="/technology/">See the technology we use and why</a></p></div></section>
 <section class="soft"><div class="wrap">${secHead('—', 'Process', 'How every project runs')}${processSteps()}</div></section>
 ${ctaBand()}`,
 });
@@ -267,10 +267,9 @@ for (const s of services) {
       <div class="stack">${s.stack.map((t) => `<span>${esc(t)}</span>`).join('')}</div>
     </div>
     <div class="card dark">
-      <span class="eyebrow">Case study</span>
       <h3>ZOBRA</h3>
       <p>${esc(zobra.summary)}</p>
-      <a class="text-link light" href="/work/zobra/">Read how we built it →</a>
+      <a class="text-link light" href="/work/zobra/">Read how we built it</a>
     </div>
     <div class="card">
       <h3>Start with a conversation</h3>
@@ -312,11 +311,10 @@ add({
 <section><div class="wrap">
   <a class="case card-link" href="/work/zobra/">
     <div>
-      <span class="eyebrow">Our product · Retail &amp; delivery</span>
       <h2>ZOBRA</h2>
       <p class="lead">${esc(zobra.summary)}</p>
       <div class="stack">${['Web app', 'Android apps', 'Backend', 'Maps & location', 'UI/UX'].map((t) => `<span>${t}</span>`).join('')}</div>
-      <span class="more">Read the case study →</span>
+      <span class="more">Read the case study</span>
     </div>
     <div class="phones small-phones">${phone(zobra.screenshots[0], 'p1')}${phone(zobra.screenshots[2], 'p2')}</div>
   </a>
@@ -355,14 +353,13 @@ ${zobraMedia()}
   <div class="grid four">${zobra.built.map((b) => `<div class="card"><h3>${esc(b.title)}</h3><p>${esc(b.text)}</p></div>`).join('')}</div>
 </div></section>
 <section class="product"><div class="wrap">
-  <span class="eyebrow">Engineering</span>
   <h2>The details that make it trustworthy</h2>
-  <div class="grid">${zobra.highlights.map(([t, d]) => `<div class="card"><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join('')}</div>
+  <div class="grid four">${zobra.highlights.map(([t, d]) => `<div class="card"><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join('')}</div>
 </div></section>
 <section><div class="wrap">
   <h2>Technology</h2>
   <div class="stack">${zobra.stack.map((t) => `<span>${esc(t)}</span>`).join('')}</div>
-  <p class="mt"><a class="text-link" href="/blog/building-a-hyperlocal-delivery-app/">Read: 7 lessons from building a hyperlocal delivery app →</a></p>
+  <p class="mt"><a class="text-link" href="/blog/building-a-hyperlocal-delivery-app/">Read 7 lessons from building a hyperlocal delivery app</a></p>
 </div></section>
 ${ctaBand('Building a marketplace or delivery product?', 'We have solved these problems for our own product. Let us help with yours.')}`,
 });
@@ -380,11 +377,11 @@ add({
       <h3>${esc(e.title)}</h3>
       <p class="price">${priceFor(e.key)}</p>
       <dl class="facts"><dt>Best when</dt><dd>${esc(e.fit)}</dd><dt>How it works</dt><dd>${esc(e.how)}</dd><dt>Typical length</dt><dd>${esc(e.time)}</dd></dl>
-      <a class="btn btn-ghost full" href="/contact/?model=${encodeURIComponent(e.title)}">Ask about ${esc(e.title.toLowerCase())}</a>
+      <a class="btn btn-ghost full" href="/contact/?model=${encodeURIComponent(e.title)}">Ask about this<span class="sr-only"> model: ${esc(e.title)}</span></a>
     </div>`).join('')}</div>
 </div></section>
 ${packages.some((p) => p.price) ? `<section class="soft"><div class="wrap">
-  <span class="eyebrow">Packages</span><h2>Fixed packages with fixed prices</h2>
+  <h2>Fixed packages with fixed prices</h2>
   <div class="grid">${packages.map((p) => `
     <div class="card package">
       <h3>${esc(p.title)}</h3>
@@ -395,11 +392,11 @@ ${packages.some((p) => p.price) ? `<section class="soft"><div class="wrap">
     </div>`).join('')}</div>
 </div></section>` : ''}
 <section class="soft"><div class="wrap two-col">
-  <div><span class="eyebrow">Every project</span><h2>What you always get</h2>${list(guarantees)}</div>
-  <div><span class="eyebrow">Process</span><h2>Four steps</h2><ol class="numbered">${steps.map((s) => `<li><strong>${esc(s.title)}.</strong> ${esc(s.text)}</li>`).join('')}</ol></div>
+  <div><h2>What you always get</h2>${list(guarantees)}</div>
+  <div><h2>Four steps</h2><ol class="numbered">${steps.map((s) => `<li><strong>${esc(s.title)}.</strong> ${esc(s.text)}</li>`).join('')}</ol></div>
 </div></section>
 <section id="faq"><div class="wrap">
-  <span class="eyebrow">FAQ</span><h2>Common questions</h2>
+  <h2>Common questions</h2>
   <div class="faq">${faqs.map((f) => `<details class="card"><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>
 </div></section>
 ${ctaBand()}`,
@@ -420,17 +417,17 @@ add({
   <aside class="side"><div class="card">
     <h3>Where we are</h3>
     <p>${esc(site.address || site.city)}</p>
-    ${site.mapsUrl ? `<a class="text-link" href="${esc(site.mapsUrl)}" rel="noopener">Open in Google Maps →</a>` : ''}
+    ${site.mapsUrl ? `<a class="text-link" href="${esc(site.mapsUrl)}" rel="noopener">Open in Google Maps</a>` : ''}
   </div></aside>
 </div>
 ${site.stats.length ? `<div class="wrap mt">${statsBar()}</div>` : ''}
 </section>
 <section class="soft"><div class="wrap">
-  <span class="eyebrow">Values</span><h2>How we think</h2>
+  <h2>How we think</h2>
   <div class="grid four">${values.map((v) => `<div class="card"><h3>${esc(v.title)}</h3><p>${esc(v.text)}</p></div>`).join('')}</div>
 </div></section>
 ${site.team.length ? `<section><div class="wrap">
-  <span class="eyebrow">Team</span><h2>The people you'll work with</h2>
+  <h2>The people you'll work with</h2>
   <div class="grid four">${site.team.map((m) => `<div class="card person">${m.photo ? `<img src="${esc(m.photo)}" alt="${esc(m.name)}" width="320" height="320" loading="lazy">` : ''}<h3>${esc(m.name)}</h3><p>${esc(m.role)}</p>${m.linkedin ? `<a class="text-link" href="${esc(m.linkedin)}" rel="noopener">LinkedIn</a>` : ''}</div>`).join('')}</div>
 </div></section>` : ''}
 ${testimonials()}
@@ -510,13 +507,13 @@ add({
     </div>
     <label>What do you need? *<select name="service" required>${[...services.map((s) => s.title), 'Several of these', 'Not sure yet', 'Job application'].map(opt).join('')}</select></label>
     <div class="two">
-      <label>Budget<select name="budget">${['Not sure yet', 'Under ₹2 lakh', '₹2–5 lakh', '₹5–15 lakh', '₹15 lakh+'].map(opt).join('')}</select></label>
-      <label>When do you want to start?<select name="timeline">${['As soon as possible', 'Within a month', 'In 1–3 months', 'Just exploring'].map(opt).join('')}</select></label>
+      <label>Budget<select name="budget">${['Not sure yet', 'Under ₹2 lakh', '₹2 to 5 lakh', '₹5 to 15 lakh', '₹15 lakh+'].map(opt).join('')}</select></label>
+      <label>When do you want to start?<select name="timeline">${['As soon as possible', 'Within a month', 'In 1 to 3 months', 'Just exploring'].map(opt).join('')}</select></label>
     </div>
     <label>How would you like to work?<select name="model">${['Not sure yet', ...engagements.map((e) => e.title)].map(opt).join('')}</select></label>
     <label>About your project *<textarea name="message" required placeholder="What are you building, who is it for, and what does a good result look like?"></textarea></label>
-    <label class="check"><input type="checkbox" name="nda"> I'd like an NDA before sharing details</label>
-    <p class="form-error" role="alert" hidden></p>
+    <label class="check"><input type="checkbox" name="nda"> I’d like an NDA before sharing details</label>
+    <p class="form-error" id="form-error" role="alert" hidden></p>
     <p class="form-ok" role="status" hidden></p>
     <button class="btn btn-primary" type="submit">Send enquiry</button>
     <p class="note">${site.formEndpoint ? 'Your message is sent straight to our team.' : 'This opens your email app with your message filled in.'} By sending, you agree to our <a href="/privacy/">privacy policy</a>.</p>
