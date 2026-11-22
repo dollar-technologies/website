@@ -57,7 +57,7 @@ export const services = [
     intro: 'We design and build the websites and web apps your customers and your team use every day: company sites, online stores, booking systems, customer portals and admin consoles. Design is part of the job, not an extra: every screen is planned around how people really use it and checked on small phones. When location matters we add maps, store finders and delivery zones that are checked on the server.',
     deliverables: ['Screen designs and a clickable prototype before building starts', 'Responsive site or app that works from 360px phones to desktops', 'Sign-in with roles (customer, staff, admin) and access rules', 'Admin console to manage users, content and orders', 'Maps, store finders and delivery radius checks when you need them', 'Staging version you can try at any time, then source code and handover docs'],
     whoFor: ['Businesses moving a manual process (WhatsApp, Excel, paper) online', 'Startups that need a first version in front of real users', 'Teams replacing a slow or hard-to-change existing system'],
-    timeline: 'A company website takes 2–3 weeks. A focused first version of a web app usually takes 6–12 weeks.',
+    timeline: 'A company website takes 2 to 3 weeks. A focused first version of a web app usually takes 6 to 12 weeks.',
     stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Google Maps Platform', 'Vercel'],
   },
   {
@@ -68,7 +68,7 @@ export const services = [
     intro: 'We build mobile apps in Flutter: one codebase, smooth native performance on Android and iOS, and one team to pay. It is the right choice for almost every new product. When an app leans hard on the device (Bluetooth, heavy background work), we can build natively in Kotlin or Swift instead, and we tell you why before you pay for it.',
     deliverables: ['Android and iOS apps from one Flutter codebase', 'Customer and staff/partner apps from shared code where it helps', 'Push notifications, location, camera and payments handled properly', 'Offline-friendly screens for weak networks', 'Play Store and App Store listings, signing and release builds', 'Testing on emulators and real devices'],
     whoFor: ['Startups launching on Android and iOS on one budget', 'Businesses that need separate apps for customers and for staff or riders', 'Products moving from a website to an app their customers keep on the phone'],
-    timeline: 'A first app for Android and iOS usually takes 8–12 weeks.',
+    timeline: 'A first app for Android and iOS usually takes 8 to 12 weeks.',
     stack: ['Flutter', 'Dart', 'Firebase', 'Google Maps', 'Razorpay'],
   },
   {
@@ -79,7 +79,7 @@ export const services = [
     intro: 'Most bugs that cost money live in the backend: a price taken from the browser, an order placed twice, a user reading someone else’s data. We design data models and server logic where the database itself enforces the rules, test them before real users arrive, and host everything on AWS or Vercel with separate staging and production, automated deploys and a monthly bill you can predict.',
     deliverables: ['Database design and versioned migrations', 'Access rules for every role, enforced on the server', 'Atomic order, stock and payment flows (no double orders, no negative stock)', 'Scheduled jobs (expiry, reminders, reports)', 'Hosting, automated deploys, backups and monitoring on AWS', 'Automated security and regression checks'],
     whoFor: ['Marketplaces, delivery and booking products with several user roles', 'Apps that handle money, stock or personal data', 'Teams whose current backend, hosting or cloud bill is hard to trust'],
-    timeline: 'Usually built alongside the web or mobile app; a backend-only engagement takes 4–10 weeks.',
+    timeline: 'Usually built alongside the web or mobile app; a backend-only engagement takes 4 to 10 weeks.',
     stack: ['Node.js', 'Express', 'TypeScript', 'PostgreSQL', 'MongoDB', 'Supabase', 'AWS', 'Docker'],
   },
   {
@@ -143,15 +143,15 @@ export const techStack = [
 
 // Fixed packages. Shown on How we work only when at least one price is filled. CONFIRM prices.
 export const packages = [
-  { key: 'website', title: 'Launch website', price: null, time: '2–3 weeks', items: ['Up to 6 pages, designed for your brand', 'Works on phones, fast and Google-ready', 'Contact form and WhatsApp/call buttons', 'Hosting setup and your domain connected'] },
-  { key: 'mvp', title: 'MVP app', price: null, time: '8–10 weeks', items: ['Web app plus Android and iOS apps (Flutter)', 'Sign-in, roles and an admin console', 'Payments, maps or notifications as needed', 'Store listings and one month of support'] },
+  { key: 'website', title: 'Launch website', price: null, time: '2 to 3 weeks', items: ['Up to 6 pages, designed for your brand', 'Works on phones, fast and Google-ready', 'Contact form and WhatsApp/call buttons', 'Hosting setup and your domain connected'] },
+  { key: 'mvp', title: 'MVP app', price: null, time: '8 to 10 weeks', items: ['Web app plus Android and iOS apps (Flutter)', 'Sign-in, roles and an admin console', 'Payments, maps or notifications as needed', 'Store listings and one month of support'] },
   { key: 'care', title: 'Monthly support', price: null, time: 'Monthly', items: ['Error monitoring and fixes', 'Security and dependency updates', 'Backups and restore checks', 'Set hours for small improvements'] },
 ];
 
 // Questions answered on /engagement/#faq (also added to search results as FAQ data).
 export const faqs = [
   { q: 'How much does a project cost?', a: 'It depends on the scope. A company website is a few weeks of work; an app with customer, staff and admin sides is a few months. After a free 30-minute call we send a written estimate with a fixed price or a monthly cost, so you know the number before anything starts.' },
-  { q: 'How long does it take?', a: 'A company website takes 2–3 weeks. A first version of an app usually takes 8–12 weeks. You get a staging version to try from the first weeks, not only at the end.' },
+  { q: 'How long does it take?', a: 'A company website takes 2 to 3 weeks. A first version of an app usually takes 8 to 12 weeks. You get a staging version to try from the first weeks, not only at the end.' },
   { q: 'Who owns the code?', a: 'You do, from day one. The code lives in your own repository, and the designs, data and accounts (hosting, app stores, payments) are in your company’s name.' },
   { q: 'Will you sign an NDA?', a: 'Yes. If you want one, we sign a non-disclosure agreement before you share the details of your idea. Tick the NDA box on the contact form and we will send it first.' },
   { q: 'Why Flutter and not native apps?', a: 'Flutter gives you Android and iOS apps from one codebase with smooth native performance, so you pay one team instead of two. We build natively in Kotlin or Swift only when an app leans hard on the device, and we explain why before you pay for it.' },
@@ -161,7 +161,7 @@ export const faqs = [
 ];
 
 export const engagements = [
-  { key: 'mvp', title: 'Fixed-scope MVP', fit: 'You have an idea and need a first version in front of real users.', how: 'We agree the scope in a short discovery, then build it for a fixed price and timeline. Changes are added as separate, priced items.', time: '6–12 weeks' },
+  { key: 'mvp', title: 'Fixed-scope MVP', fit: 'You have an idea and need a first version in front of real users.', how: 'We agree the scope in a short discovery, then build it for a fixed price and timeline. Changes are added as separate, priced items.', time: '6 to 12 weeks' },
   { key: 'team', title: 'Dedicated team', fit: 'You have a product and need a steady team to keep building it.', how: 'A small team (developer, designer, lead) works only on your product, with weekly demos and a shared roadmap. Billed monthly.', time: '3 months or more' },
   { key: 'tm', title: 'Time & materials', fit: 'The scope is still changing, or the work is a set of smaller tasks.', how: 'You pay for the hours worked, with a weekly report and a budget cap you set.', time: 'Flexible' },
   { key: 'support', title: 'Support & maintenance', fit: 'Your product is live and needs to stay healthy.', how: 'A monthly retainer covering monitoring, updates, fixes and a set number of improvement hours.', time: 'Monthly' },
@@ -219,8 +219,13 @@ export const zobra = {
   ],
   stack: ['React', 'TypeScript', 'Tailwind CSS', 'Capacitor (Android)', 'Supabase', 'PostgreSQL', 'Google Maps Platform', 'Vercel', 'Sentry'],
   status: 'ZOBRA is being prepared for a pilot with local shops in Chennai.',
-  // TODO optional: shown on the case study when filled.
-  screenshots: [], // e.g. { src: '/assets/zobra/home.png', alt: 'ZOBRA customer home screen' }
+  // Real screens from the ZOBRA staging app (test stores and test orders only). The first three are also used on Home.
+  screenshots: [
+    { src: '/assets/zobra/zobra-home.webp', alt: 'ZOBRA customer app home: delivery time, categories and stores near the customer' },
+    { src: '/assets/zobra/zobra-store.webp', alt: 'A verified store page in ZOBRA with opening hours, delivery time and cash on delivery' },
+    { src: '/assets/zobra/zobra-order.webp', alt: 'ZOBRA order tracking: placed, accepted by store, packed, on the way, delivered' },
+    { src: '/assets/zobra/zobra-seller.webp', alt: 'ZOBRA seller portal dashboard with revenue, orders and low-stock alerts' },
+  ],
   video: '',       // YouTube embed URL, e.g. 'https://www.youtube-nocookie.com/embed/VIDEO_ID'
   playStore: '',   // Google Play listing URL
 };

@@ -16,8 +16,12 @@ if (form) {
     e.preventDefault();
     const err = form.querySelector('.form-error');
     const ok = form.querySelector('.form-ok');
-    const bad = [...form.querySelectorAll('[required]')].find((el) => !el.checkValidity());
-    if (bad) { err.textContent = 'Please fill in your name, a valid email and a few words about your project.'; err.hidden = false; bad.focus(); return; }
+    const invalid = [...form.querySelectorAll('[required]')].filter((el) => !el.checkValidity());
+    for (const el of form.querySelectorAll('[required]')) {
+      if (invalid.includes(el)) { el.setAttribute('aria-invalid', 'true'); el.setAttribute('aria-describedby', err.id); }
+      else { el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); }
+    }
+    if (invalid.length) { err.textContent = 'Fill in your name, a valid email and a few words about your project.'; err.hidden = false; invalid[0].focus(); return; }
     err.hidden = true;
     const f = new FormData(form);
     if (f.get('_gotcha')) return; // bot filled the hidden field
